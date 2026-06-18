@@ -1,0 +1,41 @@
+{
+  "name": "pulse-check-api",
+  "version": "1.0.0",
+  "description": "A dead man's switch API to manage remote sensors",
+  "keywords": [
+    "pulse-check",
+    "api",
+    "node",
+    "ts",
+    "express",
+    "backend"
+  ],
+  "homepage": "https://github.com/MrRyt247/Pulse-Check-API#readme",
+  "bugs": {
+    "url": "https://github.com/MrRyt247/Pulse-Check-API/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrRyt247/Pulse-Check-API.git"
+  },
+  "license": "ISC",
+  "author": "MrRyt247",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "nodemon --exec tsx src/index.ts",
+    "test": "npm test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.9.3",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}
