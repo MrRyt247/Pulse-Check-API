@@ -6,6 +6,7 @@ import {
   getMonitor,
   heartbeat,
   saveMonitor,
+  pauseMonitor,
 } from "../utils/monitors.store.js";
 
 const monitorRoutes = Router();
@@ -21,7 +22,7 @@ monitorRoutes.post("/", (req: Request, res: Response) => {
   const { id, timeout, alert_email } = req.body;
 
   if (getMonitor(id) !== null)
-    return res.status(400).send("Monitor already exists");
+    return res.status(400).send({ error: `Monitor ${id} already exists` });
 
   const monitor: Monitor = {
     id,
@@ -42,12 +43,27 @@ monitorRoutes.post("/:id/heartbeat", (req: Request, res: Response) => {
   const id = String(req.params.id);
 
   const monitor = heartbeat(id);
-  if (!monitor) return res.status(404).send("Not found");
+  if (!monitor)
+    return res.status(404).send({ error: `Monitor ${id} Not found` });
 
   res.status(200).send({ message: `Monitor ${id} heartbeat` });
 });
 
-// Pause -  can only active
+// Pause — stops the countdown for an active monitor
+monitorRoutes.post("/:id/heartbeat/pause", (req: Request, res: Response) => {
+  const id = String(req.params.id);
+
+  switch (pauseMonitor(id)) {
+    case "not found":
+      return res.status(404).send({ error: `Monitor ${id} not found` });
+    case "already down":
+      return res.status(409).send({ error: `Monitor ${id} is already down` });
+    case "already paused":
+      return res.status(409).send({ error: `Monitor ${id} is already paused` });
+    case "paused":
+      return res.status(200).send({ message: `Monitor ${id} paused` });
+  }
+});
 
 // Delete
 

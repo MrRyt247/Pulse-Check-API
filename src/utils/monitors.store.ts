@@ -1,8 +1,7 @@
 import { LocalStorage } from "node-localstorage";
-import Monitor from "./model.js";
+import Monitor, { PauseOutcome } from "./model.js";
 
 const localStorage = new LocalStorage("./scratch");
-
 const timers = new Map<string, NodeJS.Timeout>();
 
 export function getMonitor(id: string): Monitor | null {
@@ -27,7 +26,7 @@ function clearTimer(id: string): void {
   }
 }
 
-// Fires when a monitor misses its deadline: mark it down and (later) alert.
+// Alert logic
 function fireAlert(id: string): void {
   const monitor = getMonitor(id);
   if (!monitor) return;
@@ -42,6 +41,7 @@ function fireAlert(id: string): void {
   );
 }
 
+// Reset logic
 export function resetTimer(
   monitor: Monitor,
   delayMs = monitor.timeout * 1000,
@@ -75,4 +75,17 @@ export function rehydrateTimers(): void {
       monitor.timeout * 1000 - (Date.now() - monitor.lastSeen);
     resetTimer(monitor, remainingMs);
   }
+}
+
+// Pause logic
+export function pauseMonitor(id: string): PauseOutcome {
+  const monitor = getMonitor(id);
+  if (!monitor) return "not found";
+  if (monitor.status === "down") return "already down";
+  if (monitor.status === "paused") return "already paused";
+
+  monitor.status = "paused";
+  saveMonitor(monitor);
+  clearTimer(monitor.id);
+  return "paused";
 }

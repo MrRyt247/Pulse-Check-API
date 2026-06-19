@@ -6,3 +6,10 @@ export default interface Monitor {
   createdAt: number;
   lastSeen: number;
 }
+
+export type PauseOutcome =
+  | "not found"
+  | "already down"
+  | "already paused"
+  | "paused";
+
