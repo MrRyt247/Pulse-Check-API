@@ -13,11 +13,6 @@ export function saveMonitor(monitor: Monitor): void {
   localStorage.setItem(monitor.id, JSON.stringify(monitor));
 }
 
-export function deleteMonitor(id: string): void {
-  clearTimer(id);
-  localStorage.removeItem(id);
-}
-
 function clearTimer(id: string): void {
   const existing = timers.get(id);
   if (existing) {
@@ -88,4 +83,14 @@ export function pauseMonitor(id: string): PauseOutcome {
   saveMonitor(monitor);
   clearTimer(monitor.id);
   return "paused";
+}
+
+// Delete logic
+export function deleteMonitor(id: string): Monitor | null {
+  const monitor = getMonitor(id);
+  if (!monitor) return null;
+
+  clearTimer(id);
+  localStorage.removeItem(id);
+  return monitor;
 }

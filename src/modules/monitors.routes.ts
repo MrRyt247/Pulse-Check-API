@@ -7,6 +7,7 @@ import {
   heartbeat,
   saveMonitor,
   pauseMonitor,
+  deleteMonitor,
 } from "../utils/monitors.store.js";
 
 const monitorRoutes = Router();
@@ -44,7 +45,7 @@ monitorRoutes.post("/:id/heartbeat", (req: Request, res: Response) => {
 
   const monitor = heartbeat(id);
   if (!monitor)
-    return res.status(404).send({ error: `Monitor ${id} Not found` });
+    return res.status(404).send({ error: `Monitor ${id} not found` });
 
   res.status(200).send({ message: `Monitor ${id} heartbeat` });
 });
@@ -65,7 +66,16 @@ monitorRoutes.post("/:id/heartbeat/pause", (req: Request, res: Response) => {
   }
 });
 
-// Delete
+// Delete - removes an existing monitor
+monitorRoutes.delete("/:id", (req: Request, res: Response) => {
+  const id = String(req.params.id);
+
+  const monitor = deleteMonitor(id);
+  if (!monitor)
+    return res.status(404).send({ error: `Monitor ${id} not found` });
+
+  res.status(200).send({ message: `Monitor ${id} deleted` });
+});
 
 // Edit
 
