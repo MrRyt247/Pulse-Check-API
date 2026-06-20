@@ -94,3 +94,23 @@ export function deleteMonitor(id: string): Monitor | null {
   localStorage.removeItem(id);
   return monitor;
 }
+
+// Edit logic
+export function updateMonitor(
+  id: string,
+  patch: { timeout?: number; alert_email?: string },
+): Monitor | null {
+  const monitor = getMonitor(id);
+  if (!monitor) return null;
+
+  const timeoutChanged =
+    patch.timeout !== undefined && patch.timeout !== monitor.timeout;
+
+  if (patch.timeout !== undefined) monitor.timeout = patch.timeout;
+  if (patch.alert_email !== undefined) monitor.alert_email = patch.alert_email;
+
+  saveMonitor(monitor);
+  if (timeoutChanged) resetTimer(monitor);
+
+  return monitor;
+}

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
-import Monitor from "../utils/model.js";
+import Monitor, { updateMonitorSchema } from "../utils/model.js";
 import {
   resetTimer,
   getMonitor,
@@ -8,6 +8,7 @@ import {
   saveMonitor,
   pauseMonitor,
   deleteMonitor,
+  updateMonitor,
 } from "../utils/monitors.store.js";
 
 const monitorRoutes = Router();
@@ -77,6 +78,21 @@ monitorRoutes.delete("/:id", (req: Request, res: Response) => {
   res.status(200).send({ message: `Monitor ${id} deleted` });
 });
 
-// Edit
+// Admin edits monitor details
+monitorRoutes.patch("/:id", (req: Request, res: Response) => {
+  const id = String(req.params.id);
+
+  const parsed = updateMonitorSchema.safeParse(req.body);
+  if (!parsed.success)
+    return res
+      .status(400)
+      .send({ error: parsed.error.issues.map((issue) => issue.message) });
+
+  const monitor = updateMonitor(id, parsed.data);
+  if (!monitor)
+    return res.status(404).send({ error: `Monitor ${id} not found` });
+
+  res.status(200).send({ message: `Monitor ${id} updated` });
+});
 
 export default monitorRoutes;
