@@ -9,15 +9,10 @@ import {
   pauseMonitor,
   deleteMonitor,
   updateMonitor,
+  getAllMonitors,
 } from "../utils/monitors.store.js";
 
 const monitorRoutes = Router();
-
-monitorRoutes.get("/", (req: Request, res: Response) => {
-  res.status(200).json({
-    message: "Hello from monitors",
-  });
-});
 
 // Admin creates a device
 monitorRoutes.post("/", (req: Request, res: Response) => {
@@ -93,6 +88,12 @@ monitorRoutes.patch("/:id", (req: Request, res: Response) => {
     return res.status(404).send({ error: `Monitor ${id} not found` });
 
   res.status(200).send({ message: `Monitor ${id} updated` });
+});
+
+// Admin gets all monitors
+monitorRoutes.get("/", (req: Request, res: Response) => {
+  const monitors = getAllMonitors();
+  res.status(200).send({ count: monitors.length, monitors });
 });
 
 export default monitorRoutes;

@@ -21,6 +21,17 @@ function clearTimer(id: string): void {
   }
 }
 
+export function getAllMonitors(): Monitor[] {
+  const monitors: Monitor[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+    const monitor = getMonitor(key);
+    if (monitor) monitors.push(monitor);
+  }
+  return monitors;
+}
+
 // Alert logic
 function fireAlert(id: string): void {
   const monitor = getMonitor(id);
@@ -30,7 +41,6 @@ function fireAlert(id: string): void {
   saveMonitor(monitor);
   timers.delete(id);
 
-  // TODO: trigger the alert (email to monitor.alert_email).
   console.log(
     `Monitor ${id} is DOWN — no heartbeat within ${monitor.timeout}s`,
   );
