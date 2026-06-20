@@ -15,6 +15,15 @@ export type PauseOutcome =
   | "already paused"
   | "paused";
 
+// Validation schema for registering a monitor (POST): all fields required.
+export const createMonitorSchema = z.object({
+  id: z.string().trim().min(1, "id is required"),
+  timeout: z.coerce.number().int().positive(),
+  alert_email: z.email(),
+});
+
+export type CreateMonitorInput = z.infer<typeof createMonitorSchema>;
+
 export const updateMonitorSchema = z
   .object({
     timeout: z.coerce.number().int().positive().optional(),

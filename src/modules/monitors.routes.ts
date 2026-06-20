@@ -1,6 +1,9 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
-import Monitor, { updateMonitorSchema } from "../utils/model.js";
+import Monitor, {
+  createMonitorSchema,
+  updateMonitorSchema,
+} from "../utils/model.js";
 import {
   resetTimer,
   getMonitor,
@@ -16,7 +19,13 @@ const monitorRoutes = Router();
 
 // Admin creates a device
 monitorRoutes.post("/", (req: Request, res: Response) => {
-  const { id, timeout, alert_email } = req.body;
+  const parsed = createMonitorSchema.safeParse(req.body);
+  if (!parsed.success)
+    return res
+      .status(400)
+      .send({ error: parsed.error.issues.map((issue) => issue.message) });
+
+  const { id, timeout, alert_email } = parsed.data;
 
   if (getMonitor(id) !== null)
     return res.status(400).send({ error: `Monitor ${id} already exists` });
